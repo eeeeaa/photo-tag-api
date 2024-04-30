@@ -6,7 +6,8 @@ const logger = require("morgan");
 const cors = require("cors");
 
 const indexRouter = require("./routes/index");
-const usersRouter = require("./routes/users");
+const playerRouter = require("./routes/players");
+const charImageRouter = require("./routes/charImages");
 
 const compression = require("compression");
 const helmet = require("helmet");
@@ -57,7 +58,8 @@ app.use(
 );
 
 app.use("/", indexRouter);
-app.use("/users", usersRouter);
+app.use("/players", playerRouter);
+app.use("/char-images", charImageRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
