@@ -1,5 +1,9 @@
 const asyncHandler = require("express-async-handler");
 const { body } = require("express-validator");
+const {
+  validationErrorHandler,
+  validIdErrorHandler,
+} = require("../handler/validationErrorHandler");
 
 const Player = require("../model/player");
 
@@ -8,16 +12,19 @@ exports.players_get = asyncHandler(async (req, res, next) => {
   res.json({ players: allPlayers });
 });
 
-exports.players_get_one = asyncHandler(async (req, res, next) => {
-  const player = await Player.findById(req.params.id).exec();
+exports.players_get_one = [
+  validIdErrorHandler,
+  asyncHandler(async (req, res, next) => {
+    const player = await Player.findById(req.params.id).exec();
 
-  if (player === null) {
-    const err = new Error("player not found");
-    err.status = 404;
-    return next(err);
-  }
-  res.json({ player: player });
-});
+    if (player === null) {
+      const err = new Error("player not found");
+      err.status = 404;
+      return next(err);
+    }
+    res.json({ player: player });
+  }),
+];
 
 exports.players_post = [
   body("player_name")
@@ -27,6 +34,7 @@ exports.players_post = [
     .escape(),
   body("start_time").optional({ values: "falsy" }).isISO8601().toDate(),
   body("end_time").optional({ values: "falsy" }).isISO8601().toDate(),
+  validationErrorHandler,
   asyncHandler(async (req, res, next) => {
     const player = new Player({
       player_name: req.body.player_name,
@@ -40,6 +48,7 @@ exports.players_post = [
 ];
 
 exports.player_put = [
+  validIdErrorHandler,
   body("player_name")
     .trim()
     .isLength({ min: 1 })
@@ -47,6 +56,7 @@ exports.player_put = [
     .escape(),
   body("start_time").optional({ values: "falsy" }).isISO8601().toDate(),
   body("end_time").optional({ values: "falsy" }).isISO8601().toDate(),
+  validationErrorHandler,
   asyncHandler(async (req, res, next) => {
     const existPlayer = await Player.findById(req.params.id).exec();
     if (existPlayer === null) {
@@ -71,15 +81,18 @@ exports.player_put = [
   }),
 ];
 
-exports.player_delete = asyncHandler(async (req, res, next) => {
-  const player = await Player.findById(req.params.id).exec();
-  if (player === null) {
-    const err = new Error("player not found");
-    err.status = 404;
-    return next(err);
-  }
+exports.player_delete = [
+  validIdErrorHandler,
+  asyncHandler(async (req, res, next) => {
+    const player = await Player.findById(req.params.id).exec();
+    if (player === null) {
+      const err = new Error("player not found");
+      err.status = 404;
+      return next(err);
+    }
 
-  const deletedPlayer = await Player.findByIdAndDelete(req.params.id);
+    const deletedPlayer = await Player.findByIdAndDelete(req.params.id);
 
-  res.json({ deletedPlayer: deletedPlayer });
-});
+    res.json({ deletedPlayer: deletedPlayer });
+  }),
+];

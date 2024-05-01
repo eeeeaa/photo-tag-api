@@ -3,7 +3,8 @@ const Schema = mongoose.Schema;
 
 const CharImageSchema = new Schema({
   image_url: { type: String, require: true },
-  characters: [{ type: Schema.Types.ObjectId, ref: "Character" }],
+  image_width: { type: Number, require: true },
+  image_height: { type: Number, require: true },
 });
 
 module.exports = mongoose.model("CharImage", CharImageSchema);
