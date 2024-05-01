@@ -57,9 +57,10 @@ exports.characters_get_one = [
 
 exports.characters_post = [
   validCharImageIdErrorHandler,
+  body("char_profile_url").trim().isLength({ min: 1 }),
   body("char_name").trim().isLength({ min: 1 }).escape(),
-  body("char_x").exists().isNumeric(),
-  body("char_y").exists().isNumeric(),
+  body("char_x").exists().isNumeric({ min: 0, max: 1 }),
+  body("char_y").exists().isNumeric({ min: 0, max: 1 }),
   validationErrorHandler,
   asyncHandler(async (req, res, next) => {
     const charImage = await CharImage.findById(
@@ -75,6 +76,7 @@ exports.characters_post = [
 
     const character = new Character({
       charImage: req.params.charImageId,
+      char_profile_url: req.body.char_profile_url,
       char_name: req.body.char_name,
       char_x: req.body.char_x,
       char_y: req.body.char_y,
@@ -91,9 +93,10 @@ exports.characters_post = [
 exports.characters_put = [
   validCharImageIdErrorHandler,
   validCharIdErrorHandler,
+  body("char_profile_url").trim().isLength({ min: 1 }),
   body("char_name").trim().isLength({ min: 1 }).escape(),
-  body("char_x").exists().isNumeric(),
-  body("char_y").exists().isNumeric(),
+  body("char_x").exists().isNumeric({ min: 0, max: 1 }),
+  body("char_y").exists().isNumeric({ min: 0, max: 1 }),
   validationErrorHandler,
   asyncHandler(async (req, res, next) => {
     const [charImage, existCharacter] = await Promise.all([
@@ -116,6 +119,7 @@ exports.characters_put = [
     const character = new Character({
       _id: req.params.charId,
       charImage: req.params.charImageId,
+      char_profile_url: req.body.char_profile_url,
       char_name: req.body.char_name,
       char_x: req.body.char_x,
       char_y: req.body.char_y,
