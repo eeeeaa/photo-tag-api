@@ -6,6 +6,7 @@ const {
 } = require("../handler/validationErrorHandler");
 
 const CharImage = require("../model/charImage");
+const Character = require("../model/character");
 
 exports.char_images_get = asyncHandler(async (req, res, next) => {
   const charImages = await CharImage.find({}).exec();
@@ -32,8 +33,7 @@ exports.char_images_post = [
   body("image_url")
     .trim()
     .isLength({ min: 1 })
-    .withMessage("image resource url must not be empty")
-    .escape(),
+    .withMessage("image resource url must not be empty"),
   body("image_width").exists().isNumeric(),
   body("image_height").exists().isNumeric(),
   validationErrorHandler,
@@ -57,8 +57,7 @@ exports.char_images_put = [
   body("image_url")
     .trim()
     .isLength({ min: 1 })
-    .withMessage("image resource url must not be empty")
-    .escape(),
+    .withMessage("image resource url must not be empty"),
   body("image_width").exists().isNumeric(),
   body("image_height").exists().isNumeric(),
   validationErrorHandler,
@@ -98,9 +97,13 @@ exports.char_images_delete = [
       return next(err);
     }
 
-    const deletedCharImage = await CharImage.findByIdAndDelete(req.params.id);
+    const [deletedCharImage, characters] = await Promise.all([
+      CharImage.findByIdAndDelete(req.params.id),
+      Character.deleteMany({ charImage: req.params.id }),
+    ]);
     res.json({
       deletedCharImage: deletedCharImage,
+      deletedCharacterCount: characters.deletedCount,
     });
   }),
 ];
