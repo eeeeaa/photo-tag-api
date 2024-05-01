@@ -8,7 +8,14 @@ const {
 const Player = require("../model/player");
 
 exports.players_get = asyncHandler(async (req, res, next) => {
-  const allPlayers = await Player.find().limit(req.query.limit).exec();
+  let allPlayers = await Player.find().limit(req.query.limit).exec();
+  if (req.query.includeInProgress === undefined) {
+    allPlayers = allPlayers.filter((val) => {
+      if (val.has_game_end) {
+        return val;
+      }
+    });
+  }
   res.json({ players: allPlayers });
 });
 
