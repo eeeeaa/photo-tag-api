@@ -31,7 +31,6 @@ exports.char_images_get_one = [
 ];
 
 exports.char_images_validate_position = [
-  //TODO validate input position if it within character ranges
   body("char_x").exists().isNumeric({ min: 0, max: 1 }),
   body("char_y").exists().isNumeric({ min: 0, max: 1 }),
   validationErrorHandler,
