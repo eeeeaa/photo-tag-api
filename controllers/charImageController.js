@@ -7,6 +7,7 @@ const {
 
 const CharImage = require("../model/charImage");
 const Character = require("../model/character");
+const character = require("../model/character");
 
 exports.char_images_get = asyncHandler(async (req, res, next) => {
   const charImages = await CharImage.find({}).exec();
@@ -25,6 +26,52 @@ exports.char_images_get_one = [
     }
     res.json({
       charImage: charImage,
+    });
+  }),
+];
+
+exports.char_images_validate_position = [
+  //TODO validate input position if it within character ranges
+  body("char_x").exists().isNumeric({ min: 0, max: 1 }),
+  body("char_y").exists().isNumeric({ min: 0, max: 1 }),
+  validationErrorHandler,
+  asyncHandler(async (req, res, next) => {
+    const [charImage, characters] = await Promise.all([
+      CharImage.findById(req.params.id).exec(),
+      Character.find({ charImage: req.params.id }).exec(),
+    ]);
+
+    const normalRange = 0.005;
+
+    const inRange = (x, min, max) => {
+      return (x - min) * (x - max) <= 0;
+    };
+
+    if (charImage === null) {
+      const err = new Error("char image not found");
+      err.status = 404;
+      return next(err);
+    }
+
+    for (const character of characters) {
+      if (
+        inRange(
+          character.char_x,
+          req.body.char_x - normalRange,
+          req.body.char_x + normalRange
+        ) &&
+        inRange(
+          character.char_y,
+          req.body.char_y - normalRange,
+          req.body.char_y + normalRange
+        )
+      ) {
+        return res.json({ character: character });
+      }
+    }
+
+    return res.status(404).json({
+      message: "position not in range of any characters",
     });
   }),
 ];
