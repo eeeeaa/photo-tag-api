@@ -57,6 +57,7 @@ exports.players_post = [
 exports.player_put = [
   validIdErrorHandler,
   body("player_name")
+    .optional({ values: "falsy" })
     .trim()
     .isLength({ min: 1 })
     .withMessage("player_name must not be empty")
