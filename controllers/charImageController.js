@@ -68,7 +68,7 @@ exports.char_images_validate_position = [
       }
     }
 
-    return res.status(404).json({
+    return res.json({
       message: "position not in range of any characters",
     });
   }),
