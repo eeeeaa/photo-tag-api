@@ -7,7 +7,6 @@ const {
 
 const CharImage = require("../model/charImage");
 const Character = require("../model/character");
-const character = require("../model/character");
 
 exports.char_images_get = asyncHandler(async (req, res, next) => {
   const charImages = await CharImage.find({}).exec();
