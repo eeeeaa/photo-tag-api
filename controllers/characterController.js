@@ -93,10 +93,23 @@ exports.characters_post = [
 exports.characters_put = [
   validCharImageIdErrorHandler,
   validCharIdErrorHandler,
-  body("char_profile_url").trim().isLength({ min: 1 }),
-  body("char_name").trim().isLength({ min: 1 }).escape(),
-  body("char_x").exists().isNumeric({ min: 0, max: 1 }),
-  body("char_y").exists().isNumeric({ min: 0, max: 1 }),
+  body("char_profile_url")
+    .optional({ values: "falsy" })
+    .trim()
+    .isLength({ min: 1 }),
+  body("char_name")
+    .optional({ values: "falsy" })
+    .trim()
+    .isLength({ min: 1 })
+    .escape(),
+  body("char_x")
+    .optional({ values: "falsy" })
+    .exists()
+    .isNumeric({ min: 0, max: 1 }),
+  body("char_y")
+    .optional({ values: "falsy" })
+    .exists()
+    .isNumeric({ min: 0, max: 1 }),
   validationErrorHandler,
   asyncHandler(async (req, res, next) => {
     const [charImage, existCharacter] = await Promise.all([

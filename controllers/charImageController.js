@@ -100,11 +100,12 @@ exports.char_images_post = [
 exports.char_images_put = [
   validIdErrorHandler,
   body("image_url")
+    .optional({ values: "falsy" })
     .trim()
     .isLength({ min: 1 })
     .withMessage("image resource url must not be empty"),
-  body("image_width").exists().isNumeric(),
-  body("image_height").exists().isNumeric(),
+  body("image_width").optional({ values: "falsy" }).exists().isNumeric(),
+  body("image_height").optional({ values: "falsy" }).exists().isNumeric(),
   validationErrorHandler,
   asyncHandler(async (req, res, next) => {
     const existCharImage = await CharImage.findById(req.params.id).exec();
