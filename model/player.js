@@ -3,7 +3,7 @@ const Schema = mongoose.Schema;
 
 const PlayerSchema = new Schema({
   player_name: { type: String, required: true },
-  start_time: { type: Date, default: Date.now },
+  start_time: { type: Date, default: Date.now, index: { expires: "3h" } },
   end_time: { type: Date },
 });
 
