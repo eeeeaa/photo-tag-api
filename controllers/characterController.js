@@ -14,7 +14,7 @@ exports.characters_get = [
   asyncHandler(async (req, res, next) => {
     const [charImage, characters] = await Promise.all([
       CharImage.findById(req.params.charImageId, "_id").exec(),
-      Character.find().exec(),
+      Character.find({ charImage: req.params.charImageId }).exec(),
     ]);
     if (charImage === null) {
       const err = new Error("char image not found");
