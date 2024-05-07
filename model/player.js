@@ -3,7 +3,14 @@ const Schema = mongoose.Schema;
 
 const PlayerSchema = new Schema({
   player_name: { type: String, required: true },
-  start_time: { type: Date, default: Date.now, index: { expires: "3h" } },
+  start_time: {
+    type: Date,
+    default: Date.now,
+    index: {
+      expires: "1h",
+      partialFilterExpression: { end_time: { $exists: false } },
+    },
+  },
   end_time: { type: Date },
 });
 
